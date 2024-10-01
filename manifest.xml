@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- Root element defining the Office Add-in -->
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" 
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" 
+           xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" 
+           xsi:type="TaskPaneApp">
+
+  <!-- Basic information about the add-in -->
+  <Id>59d8247f-68e6-4e72-854e-f10c75fdbd56</Id> <!-- Unique identifier for the add-in -->
+  <Version>0.0.0.1</Version> <!-- Version number of the add-in -->
+  <ProviderName>FIECON</ProviderName> <!-- Name of the company providing the add-in -->
+  <DefaultLocale>en-gb</DefaultLocale> <!-- Default language and region for the add-in -->
+  <DisplayName DefaultValue="ppt-links"/> <!-- Name displayed to users -->
+  <Description DefaultValue="Add some useful FIECON links to the ribbon home page."/> <!-- Brief description of the add-in -->
+  
+  <!-- Icons for the add-in -->
+  <IconUrl DefaultValue="https://media.licdn.com/dms/image/v2/D4E0BAQF0fRf3roVvtA/company-logo_200_200/company-logo_200_200/0/1719822961008/fiecon_limited_logo?e=1735776000&amp;v=beta&amp;t=th_URuz7h2VTSiiCbXCFrdQ6RR2Y06Zh4015X4YW8nU"/>
+  <HighResolutionIconUrl DefaultValue="https://media.licdn.com/dms/image/v2/D4E0BAQF0fRf3roVvtA/company-logo_200_200/company-logo_200_200/0/1719822961008/fiecon_limited_logo?e=1735776000&amp;v=beta&amp;t=th_URuz7h2VTSiiCbXCFrdQ6RR2Y06Zh4015X4YW8nU"/>
+  
+  <!-- Support URL for users to get help -->
+  <SupportUrl DefaultValue="https://fiecon.myintranet.com/"/>
+  
+  <!-- Domains that the add-in can navigate to without prompting the user -->
+  <AppDomains>
+    <AppDomain>https://www.fiecon.com/</AppDomain>
+  </AppDomains>
+  
+  <!-- Specifies which Office applications the add-in supports (PowerPoint in this case) -->
+  <Hosts>
+    <Host Name="Presentation"/>
+  </Hosts>
+  
+  <!-- Default settings for the add-in (commented out in this case) -->
+  <DefaultSettings>
+    <!-- <SourceLocation DefaultValue="https://localhost:3000/taskpane.html"/> -->
+  </DefaultSettings>
+  
+  <!-- Permissions required by the add-in (commented out in this case) -->
+  <!-- <Permissions>ReadWriteDocument</Permissions> -->
+
+  <!-- Version Overrides section for more detailed customization -->
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Hosts>
+      <Host xsi:type="Presentation">
+        <DesktopFormFactor>
+          <!-- Information displayed when the add-in is first installed -->
+          <GetStarted>
+            <Title resid="GetStarted.Title"/>
+            <Description resid="GetStarted.Description"/>
+            <LearnMoreUrl resid="GetStarted.LearnMoreUrl"/>
+          </GetStarted>
+          
+          <!-- Specifies the location of the functions that UI-less buttons can trigger -->
+          <FunctionFile resid="Commands.Url"/>
+          
+          <!-- Defines the add-in's UI integration points -->
+          <ExtensionPoint xsi:type="PrimaryCommandSurface">
+            <OfficeTab id="TabHome">
+              <Group id="CommandsGroup">
+                <Label resid="CommandsGroup.Label"/>
+                <Icon>
+                  <bt:Image size="16" resid="Icon.16x16"/>
+                  <bt:Image size="32" resid="Icon.32x32"/>
+                  <bt:Image size="80" resid="Icon.80x80"/>
+                </Icon>
+                
+                <!-- Defines a button that shows the task pane -->
+                <Control xsi:type="Button" id="TaskpaneButton">
+                  <Label resid="TaskpaneButton.Label"/>
+                  <Supertip>
+                    <Title resid="TaskpaneButton.Label"/>
+                    <Description resid="TaskpaneButton.Tooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16x16"/>
+                    <bt:Image size="32" resid="Icon.32x32"/>
+                    <bt:Image size="80" resid="Icon.80x80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <TaskpaneId>ButtonId1</TaskpaneId>
+                    <SourceLocation resid="Taskpane.Url"/>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+    
+    <!-- Resources used by the add-in (images, URLs, and strings) -->
+    <Resources>
+      <bt:Images>
+        <bt:Image id="Icon.16x16" DefaultValue="https://localhost:3000/assets/icon-16.png"/>
+        <bt:Image id="Icon.32x32" DefaultValue="https://localhost:3000/assets/icon-32.png"/>
+        <bt:Image id="Icon.80x80" DefaultValue="https://cria.fiecon.com/static/favicon.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://go.microsoft.com/fwlink/?LinkId=276812"/>
+        <bt:Url id="Commands.Url" DefaultValue="https://localhost:3000/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/taskpane.html"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="GetStarted.Title" DefaultValue="Get started with your sample add-in!"/>
+        <bt:String id="CommandsGroup.Label" DefaultValue="Commands Group"/>
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Show Taskpane"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="GetStarted.Description" DefaultValue="Your sample add-in loaded succesfully. Go to the HOME tab and click the 'Show Taskpane' button to get started."/>
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Click to Show a Taskpane"/>
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>
