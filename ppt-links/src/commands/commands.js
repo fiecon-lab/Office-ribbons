@@ -3,30 +3,52 @@
  * See LICENSE in the project root for license information.
  */
 
-/* global Office */
+
 
 Office.onReady(() => {
-  // If needed, Office.js is ready to be called.
+    
+  // Register the function with Office.
+  Office.actions.associate("openCria", openCria);
+  Office.actions.associate("findAbbrevs", findAbbrevs);
 });
 
-/**
- * Shows a notification when the add-in command is executed.
- * @param event {Office.AddinCommands.Event}
- */
-function action(event) {
-  const message = {
-    type: Office.MailboxEnums.ItemNotificationMessageType.InformationalMessage,
-    message: "Performed action.",
-    icon: "Icon.80x80",
-    persistent: true,
-  };
 
-  // Show a notification message.
-  Office.context.mailbox.item.notificationMessages.replaceAsync("action", message);
-
-  // Be sure to indicate when the add-in command function is complete.
+function openCria(event) {
+  window.open('https://cria.fiecon.com/', '_blank');
   event.completed();
 }
 
-// Register the function with Office.
-Office.actions.associate("action", action);
+
+function findAbbrevs(event) {
+
+  console.log("Hello world");
+
+  // const message = {
+  //   type: Office.MailboxEnums.ItemNotificationMessageType.InformationalMessage,
+  //   message: "Performed action.",
+  //   icon: "Icon.80x80",
+  //   persistent: true,
+  // };
+
+  // // Show a notification message.
+  // Office.context.mailbox.item.notificationMessages.replaceAsync("action", message);
+ 
+  // event.completed();
+}
+
+
+
+
+
+function helloWorld(event) {
+  Office.context.document.setSelectedDataAsync(
+      "Hello World!",
+      function (asyncResult) {
+          if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+              console.error(asyncResult.error.message);
+          }
+      }
+  );
+  event.completed();
+}
+
