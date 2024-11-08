@@ -15,7 +15,7 @@
     <AppDomain>https://fiecon.myintranet.com/</AppDomain>
 
   </AppDomains>
-
+  
   <Hosts>
     <!-- A list of hosts that the add-in is designed to work with. -->
     <Host Name="Presentation"/>
@@ -24,8 +24,8 @@
   </Hosts>
 
   <DefaultSettings>
-    <!-- <SourceLocation DefaultValue="https://localhost:3000/taskpane.html"/> -->
-    <SourceLocation DefaultValue="https://tomw-fiecon.github.io/taskpane-links/index.html"/>
+    <SourceLocation DefaultValue="https://localhost:3000/taskpane.html"/>
+    <!-- <SourceLocation DefaultValue="https://tomw-fiecon.github.io/taskpane-links/index.html"/> -->
   </DefaultSettings>
 
   <Permissions>ReadWriteDocument</Permissions>
@@ -286,9 +286,10 @@
       <bt:Urls>
         <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://fieconltd.sharepoint.com/:p:/s/Innovation/EWVKTPzbruRIjD2-hGUvo24BGA399Zy_s58EmD6IJgn5PQ?e=EcvSb4"/>
         <bt:Url id="Taskpane.Url" DefaultValue="https://tomw-fiecon.github.io/taskpane-links/index.html"/>
-        <bt:Url id="Commands.Url" DefaultValue="https://tomw-fiecon.github.io/taskpane-links/index.html"/>
+        <!-- <bt:Url id="Commands.Url" DefaultValue="https://tomw-fiecon.github.io/taskpane-links/index.html"/> -->
         <!-- For local testing -->
-        <!-- <bt:Url id="Commands.Url" DefaultValue="https://localhost:3000/commands.html"/> -->
+        <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/index.html"/>
+        <bt:Url id="Commands.Url" DefaultValue="https://localhost:3000/taskpane.html"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GetStarted.Title" DefaultValue="Get started with Cria!"/>
