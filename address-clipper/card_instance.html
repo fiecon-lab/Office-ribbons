@@ -1,0 +1,30 @@
+
+    <div class="card-instance">
+      <button class="card-insert complete" aria-label="Insert" type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="11"/>
+          <path d="M8 12l3 3 5-5"/>
+        </svg>
+      </button>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-address-wrapper">
+            <button class="card-address">Sheet1</button>
+            <button class="card-address">A3:B6</button>
+          </div>
+          <!-- <button class="delete-button">×</button> -->
+          <button class="card-delete-button" aria-label="Delete" type="button">
+            <img src="./src/icon_delete_svg.svg" alt="Delete icon">
+          </button>
+        </div>
+        <div class="card-input" contenteditable="true" placeholder="Enter description..."
+          oninput="console.log(this.innerHTML)"></div>
+        <!-- <div class="card-footer">
+          <p style="font-size:0.6rem">Use <span style="background-color: antiquewhite; border-radius: 2px; padding:0.1rem 0.2rem">shift+return</span> for a new line</p>
+        </div> -->
+      </div>
+    </div>
+

@@ -8,6 +8,7 @@ html, body {
 body {
     font-family: Arial, sans-serif;
     font-size: 16px;
+    background-color:white;
 }
 
 
@@ -342,6 +343,7 @@ color: #374151;
     max-width: 100%;
     width: max-content;
     margin: 0 auto;
+    background-color:white;
 }
 
 .app-item {
