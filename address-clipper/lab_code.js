@@ -7,9 +7,6 @@ script:
     $("#captureAddressBtn").on("click", () => tryCatch(run));
 
 
-    // Initialize an empty array to store captured ranges
-
-    let capturedRanges = [];
 
 
     async function run() {
@@ -93,7 +90,7 @@ script:
 
           const insertButton = document.createElement("button");
           insertButton.textContent = "Insert";
-          insertButton.onclick = () => insertAddress(capturedRanges.length - 1 - index);
+          insertButton.onclick = () => insertSingleCard(capturedRanges.length - 1 - index);
 
           menuBar.appendChild(infoSpan);
           menuBar.appendChild(insertButton);
@@ -114,7 +111,7 @@ script:
     }
 
 
-    function insertAddress(index) {
+    function insertSingleCard(index) {
       Excel.run(async (context) => {
         const activeCell = context.workbook.getActiveCell();
 
@@ -224,9 +221,11 @@ script:
       }, 3000);
     }
 
-
+    // Function to delete a card from the capturedRanges array and update the card container
     function deleteCard(index) {
+      // Remove the card at the specified index from the capturedRanges array
       capturedRanges.splice(index, 1);
+      // Update the card container to reflect the changes in the capturedRanges array
       updateCardContainer();
     }
 
