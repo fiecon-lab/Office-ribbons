@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
+ * See LICENSE in the project root for license information.
+ */
+
+/* global console, document, Excel, Office */
+
 // Initialize an empty array to store captured ranges
 
 let capturedRanges = [];
@@ -10,24 +17,54 @@ let capturedRanges = [];
 
 //   });
 
-function capture_address() {
-  let i = capturedRanges.length + 1;
-  let sheet = `Sheet${i}`;
-  let address = `A${i}:B${i * 10}`;
-  let fullAddress = `'${sheet}'!${address}`;
-  let description = `Description of change to ${fullAddress}`;
+Office.onReady((info) => {
+  if (info.host === Office.HostType.Excel) {
+    console.log("Office add-in loaded and ready.");
+  }
+});
 
-  const capturedData = { sheet, address, fullAddress, description, inserted: false };
-  capturedRanges.push(capturedData);
+// Global error handler - doesn't work
+// window.onerror = function(message, source, lineno, colno, error) {
+//   console.error("Uncaught error:", error);
+//   showErrorMessage("Uncaught error:" + error);
+//   // Log error or display to user
+//   return true; // Prevents the firing of the default event handler
+// };
 
-  updateCardContainer();
+async function captureAddress() {
+  if (capturedRanges.length >= 5) {
+    showErrorMessage(
+      "Unable to save more than 5 addresses at once. Unload the current addresses to the change log before continuing."
+    );
+    return;
+  }
+
+  await Excel.run(async (context) => {
+    // get selected range and current worksheet
+    const range = context.workbook.getSelectedRange();
+
+    // load and sync required data
+    range.load("address, worksheet, worksheet/name");
+    await context.sync();
+
+    const ws = range.worksheet;
+
+    // construct data
+    const sheet = ws.name;
+    const address = range.address.split("!").pop();
+    const fullAddress = range.address;
+    const description = "Description of change..."; // description placeholder
+
+    const capturedData = { sheet, address, fullAddress, description, inserted: false };
+    capturedRanges.push(capturedData);
+
+    updateCardContainer(true);
+  });
 }
 
-function updateCardContainer() {
+function updateCardContainer(focus_first = false) {
   const cardContainer = document.getElementById("cardContainer");
   cardContainer.innerHTML = ""; // Clear existing cards
-
-  let firstInput = null;
 
   console.log(capturedRanges.length);
 
@@ -114,6 +151,13 @@ function updateCardContainer() {
         }
       });
 
+      if (focus_first && index === 0) {
+        setTimeout(() => {
+          cardInput.focus();
+          window.getSelection().selectAllChildren(cardInput);
+        }, 0);
+      }
+
       // Create card footer
       const cardFooter = document.createElement("div");
       cardFooter.className = "card-footer";
@@ -126,7 +170,7 @@ function updateCardContainer() {
       cardInput.addEventListener("blur", function () {
         cardFooter.style.display = "none";
       });
-      
+
       // Add all elements to main card
       card.appendChild(cardHeader);
       card.appendChild(cardInput);
@@ -154,7 +198,12 @@ function deleteCard(index) {
 }
 
 function insertSingleCard(index) {
-  capturedRanges[index].inserted = !capturedRanges[index].inserted;
+  if (capturedRanges[index].inserted) {
+    // If already inserted, clicking button resets (instead of inserting again)
+    capturedRanges[index].inserted = false;
+  } else {
+    insertAddress(index);
+  }
   updateCardContainer();
 }
 
@@ -162,6 +211,8 @@ function insertAllCards() {
   for (i = 0; i < capturedRanges.length; i++) {
     capturedRanges[i].inserted = true;
   }
+
+  showErrorMessage("Inserting all!");
   updateCardContainer();
 }
 
@@ -180,4 +231,105 @@ function showTab(tabIndex) {
 
   // Show the selected tab
   document.getElementById(tabs[tabIndex - 1]).classList.add("active");
+}
+
+function showErrorMessage(message) {
+  const popup = document.createElement("div");
+  popup.classList.add("error-popup");
+
+  const messageElement = document.createElement("span");
+  messageElement.textContent = message;
+
+  const closeButton = document.createElement("button");
+  closeButton.innerHTML = "&times;"; // Unicode character for "X"
+  closeButton.addEventListener("click", () => {
+    popup.classList.add("fade-out");
+    setTimeout(() => {
+      popup.remove();
+    }, 500);
+  });
+
+  popup.appendChild(messageElement);
+  popup.appendChild(closeButton);
+
+  const container = document.querySelector(".error-popup-container");
+  container.prepend(popup);
+
+  setTimeout(() => {
+    popup.classList.add("fade-out");
+    setTimeout(() => {
+      popup.remove();
+    }, 500);
+  }, 5000);
+}
+
+async function insertAddress(index) {
+  try{
+    await Excel.run(async (context) => {
+    const activeCell = context.workbook.getActiveCell();
+
+    const activeSheet = context.workbook.worksheets.getActiveWorksheet();
+    activeSheet.load("name"); // Explicitly load the 'name' property
+    await context.sync(); // Sync to load the properties
+
+    // Execute only if the active sheet is "Change log"
+    if (activeSheet.name.toLowerCase() !== "change log") {
+      console.log("Action not allowed. The active sheet is not 'Change log'.");
+      // throw new Error("Unable to insert address. Destination sheet must be 'Change log'.");
+      showErrorMessage("Unable to insert address. Destination sheet must be 'Change log'.");
+      return;
+    }
+
+    const data = capturedRanges[index];
+    const initials = document.getElementById("initialsInput").value || "N/A";
+
+    // Create a horizontal array with initials and address
+    const valueArray = [
+      [data.sheet, getAddressLinkDynamic(data.sheet, data.address, data.fullAddress), data.description, initials],
+    ];
+
+    console.log(valueArray);
+
+    // Get a range that's two cells wide starting from the active cell
+    const targetRange = activeCell.getResizedRange(0, 3);
+
+    targetRange.load("valueTypes");
+
+    await context.sync();
+
+    let isEmpty = targetRange.valueTypes.every((row) =>
+      row.every((cell) => cell === Excel.RangeValueType.empty || cell === null || cell === "")
+    );
+
+    if (!isEmpty) {
+      targetRange.select();
+      // throw new Error("Unable to insert address. Destination must be empty.");
+      showErrorMessage("Unable to insert address. Destination must be empty.");
+      return;
+    }
+
+    // Set the values of the range
+    targetRange.values = valueArray;
+
+    // Success!
+    const nextRowCell = targetRange.getCell(0, 0).getOffsetRange(1, 0);
+    nextRowCell.select();
+
+    await context.sync();
+
+    capturedRanges[index].inserted = true;
+  });
+} catch (error){
+  
+}
+}
+
+function getAddressLinkDynamic(sht, addr, fullAddr) {
+  // Construct the LET formula with HYPERLINK
+  const linkFormula = `= LET(rng, ${fullAddr}, sht, TEXTAFTER(CELL("filename", rng), "]"), addr, IF(ROWS(rng) + COLUMNS(rng)=2, ADDRESS(ROW(rng), COLUMN(rng)), ADDRESS(MIN(ROW(rng)), MIN(COLUMN(rng))) & ":" & ADDRESS(MAX(ROW(rng)), MAX(COLUMN(rng)))), dynamic_link, HYPERLINK("#'" & sht & "'!" & addr, "↗️" & SUBSTITUTE(addr, "$", "")), IFERROR(dynamic_link, HYPERLINK("#'${sht}'!${addr}","[static!] ↗️${addr.replace(
+    "$",
+    ""
+  )}")))`;
+
+  return linkFormula;
 }
