@@ -1,0 +1,17 @@
+{
+    "actions": [
+        {
+            "id": "PowerupsHotkey",
+            "type": "ExecuteFunction",
+            "name": "Show task pane"
+        }
+    ],
+    "shortcuts": [
+        {
+            "action": "PowerupsHotkey",
+            "key": {
+                "default": "Ctrl+Shift+B"
+            }
+        }
+    ]
+}

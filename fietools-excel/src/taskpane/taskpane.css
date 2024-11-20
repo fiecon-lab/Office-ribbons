@@ -367,6 +367,20 @@ color: #374151;
     transition: filter 0.2s ease;
 }
 
+
+.app-icon.light {
+    background-color: white;
+    border:1px solid rgb(233, 233, 233);
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-size:4rem;
+    font-family: 'Courier New', Courier, monospace;
+    color:grey;
+}
+
+
+
 .app-item.interactive .app-icon:hover {
     filter: brightness(0.9);
 }
@@ -384,7 +398,8 @@ color: #374151;
 }
 
 .app-label.hidden {
-    visibility: hidden;
+    /* visibility: hidden; */
+    color:rgb(209, 208, 208);
 }
 
 

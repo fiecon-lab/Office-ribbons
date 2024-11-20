@@ -4,14 +4,15 @@
   <Version>0.1.0.0</Version>
   <ProviderName>FIECON Labs</ProviderName>
   <DefaultLocale>en-GB</DefaultLocale>
-  <DisplayName DefaultValue="FIECON Office Apps"/>
-  <Description DefaultValue="Enhance Office with FIECON-tailored tools. Personalise your workflow and boost productivity. Rapidly develop tailored solutions for FIECON's evolving needs and deploy them for all to access."/>
-  <IconUrl DefaultValue="https://localhost:3000/assets/fiecon_icon.png"/>
-  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/fiecon_icon.png"/>
+  <DisplayName DefaultValue="FIECON Office Powerups"/>
+  <Description DefaultValue="Accelerate your workflow with FIECON Office Powerups: Your ideas, implemented fast, instantly available to everyone."/>
+  <IconUrl DefaultValue="https://localhost:3000/assets/fiecon_icon_2.png"/>
+  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/fiecon_icon_2.png"/>
   <SupportUrl DefaultValue="https://github.com/tomw-fiecon/fiecon-apps-excel"/>
   <AppDomains>
     <AppDomain>https://tomw-fiecon.github.io/fiecon-apps-excel</AppDomain>
     <AppDomain>https://github.com/tomw-fiecon/fiecon-apps-excel</AppDomain>
+    <!-- <AppDomain>https://officedev.github.io/Office-Add-in-samples/Samples/office-keyboard-shortcuts/</AppDomain> -->
   </AppDomains>
   <Hosts>
     <Host Name="Workbook"/>
@@ -63,9 +64,9 @@
     </Hosts>
     <Resources>
       <bt:Images>
-        <bt:Image id="Icon.16x16" DefaultValue="https://localhost:3000/assets/fiecon_icon.png"/>
-        <bt:Image id="Icon.32x32" DefaultValue="https://localhost:3000/assets/fiecon_icon.png"/>
-        <bt:Image id="Icon.80x80" DefaultValue="https://localhost:3000/assets/fiecon_icon.png"/>
+        <bt:Image id="Icon.16x16" DefaultValue="https://localhost:3000/assets/icon_16.png"/>
+        <bt:Image id="Icon.32x32" DefaultValue="https://localhost:3000/assets/icon_32.png"/>
+        <bt:Image id="Icon.80x80" DefaultValue="https://localhost:3000/assets/icon_80.png"/>
       </bt:Images>
       <bt:Urls>
         <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://go.microsoft.com/fwlink/?LinkId=276812"/>
@@ -73,14 +74,17 @@
         <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/taskpane.html"/>
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="GetStarted.Title" DefaultValue="Get started with FIECON Apps for Office!"/>
+        <bt:String id="GetStarted.Title" DefaultValue="Get started with FIECON Powerups!"/>
         <bt:String id="CommandsGroup.Label" DefaultValue="FIECON"/>
-        <bt:String id="TaskpaneButton.Label" DefaultValue="FIECON Apps"/>
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Powerups"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="GetStarted.Description" DefaultValue="The FIECON Office Powerups add-in loaded successfully. Go to the HOME tab and click the 'FIECON' button to get started."/>
-        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Click to open FIECON Office Tools"/>
+        <bt:String id="GetStarted.Description" DefaultValue="The FIECON Office Powerups add-in loaded successfully. Go to the HOME tab and click the 'Powerups' button to get started."/>
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Click to open FIECON Office Powerups"/>
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>
+  <!-- <ExtendedOverrides Url="https://localhost:3000/assets/shortcuts.json"></ExtendedOverrides> -->
+  
+  <ExtendedOverrides Url="https://localhost:3000/assets/shortcuts.json"></ExtendedOverrides>
 </OfficeApp>
