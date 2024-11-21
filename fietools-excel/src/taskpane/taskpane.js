@@ -18,50 +18,7 @@ let capturedRanges = [];
 //   });
 
 Office.onReady((info) => {
-  // Office.actions.associate("PowerupsHotkey", () => {
-  //   callHotkey();
-  // });
-
-  // Display the shortcut conflict dialog for testing.
-  Office.actions.associate("TestConflict", () => {
-    console.log("Display the shortcut conflict dialog for testing.");
-  });
-
-  // Configure the keyboard shortcut to open the task pane.
-  Office.actions.associate("ShowTaskpane", () => {
-    // return Office.addin
-    //   .showAsTaskpane()
-    //   .then(() => {
-    //     return;
-    //   })
-    //   .catch((error) => {
-    //     return error.code;
-    //   });
-    console.log("HI!");
-  });
-
-  // Configure the keyboard shortcut to close the task pane.
-  Office.actions.associate("HideTaskpane", () => {
-    return Office.addin
-      .hide()
-      .then(() => {
-        return;
-      })
-      .catch((error) => {
-        return error.code;
-      });
-  });
-
-  // Configure the keyboard shortcut to run an action that's specific to the current Office host.
-  Office.actions.associate("RunAction", () => {
-    if (info.host === Office.HostType.Excel) {
-      console.log("Excel add-in loaded and ready.");
-    }
-  });
-
-  if (info.host === Office.HostType.Excel) {
-    console.log("Excel add-in loaded and ready.");
-  }
+  console.log("Ready");
 });
 
 // ERROR HANDLING

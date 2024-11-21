@@ -66,6 +66,7 @@ p {
     max-height: 65px;
     -webkit-user-select: none; 
     user-select: none; /* Standard syntax */
+    border-radius:12px;
     /* object-fit: cover; */
 }
 .button-image.small {
