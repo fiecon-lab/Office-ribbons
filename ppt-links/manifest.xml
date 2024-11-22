@@ -19,7 +19,6 @@
   <Hosts>
     <!-- A list of hosts that the add-in is designed to work with. -->
     <Host Name="Presentation"/>
-    <Host Name="Workbook" />
     <Host Name="Document" />
   </Hosts>
 
@@ -110,86 +109,6 @@
             </OfficeTab>
           </ExtensionPoint>
         </DesktopFormFactor>
-      </Host>
-      <Host xsi:type="Workbook">
-        <DesktopFormFactor>
-          <GetStarted>
-            <Title resid="GetStarted.Title"/>
-            <Description resid="GetStarted.Description"/>
-            <LearnMoreUrl resid="GetStarted.LearnMoreUrl"/>
-          </GetStarted>
-          <FunctionFile resid="Commands.Url"/>
-          <ExtensionPoint xsi:type="PrimaryCommandSurface">
-            <OfficeTab id="TabHome">
-              <Group id="CommandsGroup">
-                <Label resid="CommandsGroup.Label"/>
-
-
-                <!-- Not sure why icon is needed here, seems to be necessary -->
-                <Icon>
-                  <bt:Image size="16" resid="Icon.16x16"/>
-                  <bt:Image size="32" resid="Icon.32x32"/>
-                  <bt:Image size="80" resid="Icon.80x80"/>
-                </Icon>
-
-                <!-- Abbrev button -->
-                <!-- <Control xsi:type="Button" id="AbbrevButton">
-                  <Label resid="AbbrevButton.Label"/>
-                  <Supertip>
-                    <Title resid="AbbrevButton.Label"/>
-                    <Description resid="CriaButton.Tooltip"/>
-                  </Supertip>
-                  <Icon>
-                    <bt:Image size="16" resid="Abbrev.Icon.16x16"/>
-                    <bt:Image size="32" resid="Abbrev.Icon.32x32"/>
-                    <bt:Image size="80" resid="Abbrev.Icon.80x80"/>
-                  </Icon>
-                  <Action xsi:type="ExecuteFunction">
-                    <FunctionName>findAbbrevs</FunctionName>
-                  </Action>
-                </Control> -->
-
-                <!-- Cria button -->
-                <Control xsi:type="Button" id="CriaButton">
-                  <Label resid="CriaButton.Label"/>
-                  <Supertip>
-                    <Title resid="CriaButton.Label"/>
-                    <Description resid="CriaButton.Tooltip"/>
-                  </Supertip>
-                  <Icon>
-                    <bt:Image size="16" resid="Icon.16x16"/>
-                    <bt:Image size="32" resid="Icon.32x32"/>
-                    <bt:Image size="80" resid="Icon.80x80"/>
-                  </Icon>
-                  <Action xsi:type="ExecuteFunction">
-                    <FunctionName>openCria</FunctionName>
-                  </Action>
-                </Control>
-
-                <!-- Info button -->
-                <!-- <Control xsi:type="Button" id="InfoButton">
-                  <Label resid="InfoButton.Label"/>
-                  <Supertip>
-                    <Title resid="InfoButton.Label"/>
-                    <Description resid="InfoButton.Tooltip"/>
-                  </Supertip>
-                  <Icon>
-                    <bt:Image size="16" resid="Info.Icon.16x16"/>
-                    <bt:Image size="32" resid="Info.Icon.32x32"/>
-                    <bt:Image size="80" resid="Info.Icon.80x80"/>
-                  </Icon>
-                  <Action xsi:type="ShowTaskpane">
-                    <TaskpaneId>ButtonId1</TaskpaneId>
-                    <SourceLocation resid="Taskpane.Url"/>
-                  </Action>
-                </Control> -->
-
-
-              </Group>
-            </OfficeTab>
-          </ExtensionPoint>
-        </DesktopFormFactor>
-      
       </Host>
       <Host xsi:type="Document">
         <DesktopFormFactor>
