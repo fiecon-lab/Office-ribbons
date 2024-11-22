@@ -7,7 +7,9 @@
 
 // Initialize an empty array to store captured ranges
 
-let capturedRanges = [];
+window.sharedState = {
+  capturedRanges: [],
+};
 
 // document.addEventListener('DOMContentLoaded', () => {
 //     // Your code here
@@ -16,10 +18,6 @@ let capturedRanges = [];
 //     editableDiv.addEventListener('keydown', handle_enter);
 
 //   });
-
-Office.onReady((info) => {
-  console.log("Ready");
-});
 
 // ERROR HANDLING
 
@@ -50,15 +48,58 @@ const openCria = () =>
     window.open("https://cria.fiecon.com/", "_blank");
   });
 
-const captureAddress = async () =>
-  tryCatch(async () => {
-    // Your async function logic here
+// SAVE INITIALS
 
-    if (capturedRanges.length >= 5) {
-      showErrorMessage(
+async function initInitialsInput() {
+  const initialsInput = document.getElementById("initialsInput");
+
+  // Set the initial value of the input using the load function
+  let [result, error] = await getFromLocalStorage("pwrups_user_initials");
+  if (!error) initialsInput.value = result;
+
+  // Add event listener for the 'blur' event (when the input loses focus)
+  initialsInput.addEventListener("blur", () => setInLocalStorage("pwrups_user_initials", initialsInput.value));
+}
+
+const setInLocalStorage = async (key, value) =>
+  tryCatch(async () => {
+    const myPartitionKey = Office.context.partitionKey;
+
+    // Check if local storage is partitioned.
+    // If so, use the partition to ensure the data is only accessible by your add-in.
+    if (myPartitionKey) {
+      localStorage.setItem(myPartitionKey + key, value);
+    } else {
+      localStorage.setItem(key, value);
+    }
+  });
+
+const getFromLocalStorage = async (key) => {
+  return await tryCatch(async () => {
+    const myPartitionKey = Office.context.partitionKey;
+
+    // Check if local storage is partitioned.
+    if (myPartitionKey) {
+      return localStorage.getItem(myPartitionKey + key);
+    } else {
+      return localStorage.getItem(key);
+    }
+  });
+};
+
+Office.onReady((info) => {
+  initInitialsInput();
+  console.log("Ready");
+});
+
+// ADDRESS CLIPPER
+
+const captureAddress = async () => {
+  let [result, error] = await tryCatch(async () => {
+    if (window.sharedState.capturedRanges.length >= 5) {
+      throw Error(
         "Unable to save more than 5 addresses at once. Unload the current addresses to the change log before continuing."
       );
-      return;
     }
 
     await Excel.run(async (context) => {
@@ -78,25 +119,25 @@ const captureAddress = async () =>
       const description = "Description of change..."; // description placeholder
 
       const capturedData = { sheet, address, fullAddress, description, inserted: false };
-      capturedRanges.push(capturedData);
-
-      updateCardContainer(true);
+      window.sharedState.capturedRanges.push(capturedData);
     });
   });
+  if (!error) {
+    updateCardContainer(true);
+  }
+};
 
 const updateCardContainer = async (focus_first = false) =>
   tryCatch(async () => {
     const cardContainer = document.getElementById("cardContainer");
     cardContainer.innerHTML = ""; // Clear existing cards
 
-    console.log(capturedRanges.length);
-
-    if (capturedRanges.length == 0) {
+    if (window.sharedState.capturedRanges.length == 0) {
       cardContainer.innerHTML = `<p id="no-addresses-message">Click "Capture Address" to get started.</p>`;
       return;
     }
 
-    capturedRanges
+    window.sharedState.capturedRanges
       .slice()
       .reverse()
       .forEach((data, index) => {
@@ -117,7 +158,7 @@ const updateCardContainer = async (focus_first = false) =>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15 18 9 12 15 6"></polyline>
             </svg>`;
-        insertBtn.onclick = () => insertSingleCard(capturedRanges.length - 1 - index);
+        insertBtn.onclick = () => insertSingleCard(window.sharedState.capturedRanges.length - 1 - index);
         cardInstance.appendChild(insertBtn);
 
         // Card root div
@@ -135,12 +176,14 @@ const updateCardContainer = async (focus_first = false) =>
         // Create sheet button
         const sheetButton = document.createElement("button");
         sheetButton.className = "card-address";
-        sheetButton.textContent = data.sheet;
+        sheetButton.textContent = data.sheet.length > 15 ? `${data.sheet.substring(0, 15)}...` : data.sheet;
+        sheetButton.onclick = () => goToSheet(window.sharedState.capturedRanges.length - 1 - index);
 
         // Create range button
         const rangeButton = document.createElement("button");
         rangeButton.className = "card-address";
         rangeButton.textContent = data.address;
+        rangeButton.onclick = () => goToAddress(window.sharedState.capturedRanges.length - 1 - index);
 
         // Add buttons to address wrapper
         addressWrapper.appendChild(sheetButton);
@@ -152,7 +195,7 @@ const updateCardContainer = async (focus_first = false) =>
         deleteButton.setAttribute("aria-label", "Delete");
         deleteButton.setAttribute("type", "button");
         deleteButton.innerHTML = `<img src="../../assets/icon_delete_svg.svg" alt="Delete icon">`;
-        deleteButton.onclick = () => deleteCard(capturedRanges.length - 1 - index);
+        deleteButton.onclick = () => deleteCard(window.sharedState.capturedRanges.length - 1 - index);
 
         // Add elements to card header
         cardHeader.appendChild(addressWrapper);
@@ -165,7 +208,8 @@ const updateCardContainer = async (focus_first = false) =>
         cardInput.setAttribute("contenteditable", "true");
         cardInput.setAttribute("placeholder", "Enter description...");
         cardInput.addEventListener("input", function () {
-          capturedRanges[capturedRanges.length - 1 - index].description = this.textContent;
+          window.sharedState.capturedRanges[window.sharedState.capturedRanges.length - 1 - index].description =
+            this.textContent;
         });
         cardInput.addEventListener("keydown", function (e) {
           if (e.key === "Enter" && !e.shiftKey) {
@@ -185,7 +229,7 @@ const updateCardContainer = async (focus_first = false) =>
         // Create card footer
         const cardFooter = document.createElement("div");
         cardFooter.className = "card-footer";
-        cardFooter.innerHTML = `<p style="font-size:0.75rem">Use <span style="background-color: antiquewhite; border-radius: 2px; padding:0.1rem 0.2rem">shift+return</span> for a new line</p>`;
+        cardFooter.innerHTML = `<p style="font-size:0.75rem">Use <span class="key-btn-text">shift+return</span> for a new line</p>`;
         cardFooter.style.display = "none"; // Initially hidden
         // Add event listeners to show/hide cardFooter based on cardInput focus
         cardInput.addEventListener("focus", function () {
@@ -209,16 +253,16 @@ const updateCardContainer = async (focus_first = false) =>
 const deleteCard = async (index) =>
   tryCatch(async () => {
     // Remove the card at the specified index from the capturedRanges array
-    capturedRanges.splice(index, 1);
+    window.sharedState.capturedRanges.splice(index, 1);
     // Update the card container to reflect the changes in the capturedRanges array
     updateCardContainer();
   });
 
 const insertSingleCard = async (index) =>
   tryCatch(async () => {
-    if (capturedRanges[index].inserted) {
+    if (window.sharedState.capturedRanges[index].inserted) {
       // If already inserted, clicking button resets (instead of inserting again)
-      capturedRanges[index].inserted = false;
+      window.sharedState.capturedRanges[index].inserted = false;
       updateCardContainer();
     } else {
       insertAddress(index);
@@ -228,17 +272,17 @@ const insertSingleCard = async (index) =>
 const insertAllCards = async () =>
   tryCatch(async () => {
     let i;
-    for (i = 0; i < capturedRanges.length; i++) {
-      capturedRanges[i].inserted = true;
+    for (i = 0; i < window.sharedState.capturedRanges.length; i++) {
+      let [, error] = await insertAddress(i);
+      if (error) break;
     }
 
-    showErrorMessage("Inserting all!");
     updateCardContainer();
   });
 
 const deleteAllCards = async () =>
   tryCatch(async () => {
-    capturedRanges = [];
+    window.sharedState.capturedRanges = [];
     updateCardContainer();
   });
 
@@ -253,6 +297,43 @@ const showTab = async (tabIndex) =>
 
     // Show the selected tab
     document.getElementById(tabs[tabIndex - 1]).classList.add("active");
+  });
+
+const goToSheet = async (index) =>
+  tryCatch(async () => {
+    console.log("GOING TO SHEET");
+    let data = window.sharedState.capturedRanges[index];
+
+    await Excel.run(async (context) => {
+      // Get the worksheet by name
+      const sheet = context.workbook.worksheets.getItem(data.sheet);
+
+      // Select the range in the Excel UI
+      sheet.activate();
+
+      // Synchronize the context to apply changes
+      await context.sync();
+    });
+  });
+
+const goToAddress = async (index) =>
+  tryCatch(async () => {
+    console.log("GOING TO ADDRESS");
+    let data = window.sharedState.capturedRanges[index];
+
+    await Excel.run(async (context) => {
+      // Get the worksheet by name
+      const sheet = context.workbook.worksheets.getItem(data.sheet);
+
+      // Get the range using the specified address
+      const range = sheet.getRange(data.address);
+
+      // Select the range in the Excel UI
+      range.select();
+
+      // Synchronize the context to apply changes
+      await context.sync();
+    });
   });
 
 function showErrorMessage(message) {
@@ -296,20 +377,16 @@ const insertAddress = async (index) =>
 
       // Execute only if the active sheet is "Change log"
       if (activeSheet.name.toLowerCase() !== "change log") {
-        console.log("Action not allowed. The active sheet is not 'Change log'.");
-        // throw new Error("Unable to insert address. Destination sheet must be 'Change log'.");
         throw Error("Unable to insert address. Destination sheet must be 'Change log'.");
       }
 
-      const data = capturedRanges[index];
+      const data = window.sharedState.capturedRanges[index];
       const initials = document.getElementById("initialsInput").value || "N/A";
 
       // Create a horizontal array with initials and address
       const valueArray = [
         [data.sheet, getAddressLinkDynamic(data.sheet, data.address, data.fullAddress), data.description, initials],
       ];
-
-      console.log(valueArray);
 
       // Get a range that's two cells wide starting from the active cell
       const targetRange = activeCell.getResizedRange(0, 3);
@@ -337,7 +414,9 @@ const insertAddress = async (index) =>
 
       await context.sync();
 
-      capturedRanges[index].inserted = true;
+      window.sharedState.capturedRanges[index].inserted = true;
+
+      updateCardContainer();
     });
   });
 
@@ -351,13 +430,73 @@ function getAddressLinkDynamic(sht, addr, fullAddr) {
   return linkFormula;
 }
 
-const callHotkey = () => {
+// Configure the keyboard shortcut to open the task pane.
+Office.actions.associate("ShowTaskpane", () => {
   return Office.addin
     .showAsTaskpane()
+    .then(async () => {
+      showTab(2);
+      captureAddress();
+      return;
+    })
+    .catch((error) => {
+      return error.code;
+    });
+});
+
+// Configure the keyboard shortcut to close the task pane.
+Office.actions.associate("HideTaskpane", () => {
+  Office.addin
+    .hide()
     .then(() => {
       return;
     })
     .catch((error) => {
       return error.code;
     });
-};
+});
+
+// Configure the keyboard shortcut to run an action that's specific to the current Office host.
+Office.actions.associate("RunAction", () => {
+  const host = Office.context.host;
+
+  // Cycle through cell colors in Excel.
+  if (host === Office.HostType.Excel) {
+    const context = new Excel.RequestContext();
+    const range = context.workbook.getSelectedRange();
+    const rangeFormat = range.format;
+    rangeFormat.fill.load();
+    const colors = ["#FFFFFF", "#C7CC7A", "#7560BA", "#9DD9D2", "#FFE1A8", "#E26D5C"];
+    return context.sync().then(() => {
+      const rangeTarget = context.workbook.getSelectedRange();
+      let currentColor = -1;
+      for (let i = 0; i < colors.length; i++) {
+        if (colors[i] == rangeFormat.fill.color) {
+          currentColor = i;
+          break;
+        }
+      }
+      if (currentColor == -1) {
+        currentColor = 0;
+      } else if (currentColor == colors.length - 1) {
+        currentColor = 0;
+      } else {
+        currentColor++;
+      }
+      rangeTarget.format.fill.color = colors[currentColor];
+      return context.sync();
+    });
+  } else if (host === Office.HostType.Word) {
+    // Insert text into the Word document.
+    const context = new Word.RequestContext();
+    return context.sync().then(() => {
+      context.document.body.insertText("Added using a custom keyboard shortcut.", Word.InsertLocation.start);
+      return context.sync();
+    });
+  }
+});
+
+// Display the shortcut conflict dialog for testing.
+Office.actions.associate("TestConflict", () => {
+  console.log("Display the shortcut conflict dialog for testing.");
+});

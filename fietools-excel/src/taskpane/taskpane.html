@@ -17,7 +17,7 @@
   <!-- Link to CSS/JS-->
   <link rel="stylesheet" href="taskpane.css" type="text/css">
   <script src="taskpane.js"></script>
-  
+
 </head>
 
 <body>
@@ -29,41 +29,49 @@
   <div class="tab-container active" id="home-tab">
 
     <div class="title-bar">
-      <div></div>
-      <h3 style="margin-left:10px;">Home</h3>
+        <div class="back-button">
+          <img src="../../assets/pwrup_bolt.svg" alt="Powerup Icon" style="height:24px">
+        </div>
+      <h3>Home</h3>
     </div>
+   
 
-    <div>
-      Accelerate your workflow with FIECON Office Powerups: Your ideas, implemented fast, instantly available to everyone.
-    </div>
-
-    <div>
-      Hotkey Powerup (Ctrl + Shift + F):
-      <div>
+    <div class="hotkey-input-container">
+      <p class="hotkey-input-label">Powerup Hotkey<br><span class="key-btn-text">Ctrl</span>+<span
+          class="key-btn-text">Shift</span>+<span class="key-btn-text">F</span></p>
+      <div class="hotkey-action-input"
+        onclick="showErrorMessage('Coming soon: configure or disable the Powerup Hotkey');">
+        <img src="../../assets/ac_icon_generic.png" alt="Address Clipper" class="hotkey-action-icon ac-icon">
         Capture Address
       </div>
     </div>
+    <div class="home-description">
+      <p>
+        Accelerate your workflow with <span style="font-weight:bold; color:#DF4326">FIECON Office Powerups</span> - your
+        ideas, implemented fast, instantly available to everyone.
+      </p>
+      <p>Choose an app to get started.</p>
+    </div>
 
 
-    <h3>Apps</h3>
 
-    <div class="app-grid" style="background-color:hotpink">
+    <div class="app-grid">
       <!-- Add or remove 'interactive' class on individual app-items to toggle hover effects -->
-      
-      
+
+
       <div class="app-item interactive">
         <!-- <img src="../../assets/idea_icon.png" alt="Suggestions" class="app-icon"> -->
         <div class="app-icon interactive light" onclick="showTab(3);">+</div>
         <span class="app-label">Suggestions</span>
       </div>
-      
+
       <div class="app-item interactive">
         <img src="../../assets/cria_large.png" alt="Ask Cria" class="app-icon light" onclick="openCria()">
         <!-- <div class="app-icon"></div> -->
         <span class="app-label">Ask Cria</span>
       </div>
       <div class="app-item interactive">
-        <img src="../../assets/ac_icon_1.png" alt="Messages" class="app-icon" onclick="showTab(2);">
+        <img src="../../assets/ac_icon_generic.png" alt="Address Clipper" class="app-icon ac-icon" onclick="showTab(2);">
         <!-- <div class="app-icon"></div> -->
         <span class="app-label">Address Clipper</span>
       </div>
@@ -84,13 +92,13 @@
       </div>
     </div>
 
-
   </div>
+
 
   <div class="tab-container" id="address-clipper">
 
     <div class="title-bar">
-      <button class="back-button" onclick="showTab(1);">
+      <button class="back-button interactive" onclick="showTab(1);">
         <svg class="back-arrow" viewBox="0 0 24 24">
           <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
         </svg>
@@ -100,7 +108,7 @@
 
     <div class="button-pane">
       <div class="button-container clickable" onclick="captureAddress()">
-        <img class="button-image" src="../../assets/ac_icon_1.png" alt="Button Image" />
+        <img class="button-image ac-icon" src="../../assets/ac_icon_generic.png" alt="Button Image" />
         <div class="button-label">Capture<br>Address</div>
       </div>
 
@@ -138,7 +146,7 @@
   <div class="tab-container" id="suggestions-tab">
 
     <div class="title-bar">
-      <button class="back-button" onclick="showTab(1);">
+      <button class="back-button interactive" onclick="showTab(1);">
         <svg class="back-arrow" viewBox="0 0 24 24">
           <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
         </svg>
@@ -146,8 +154,8 @@
       <h3>Suggestions</h3>
     </div>
 
-    <!-- <iframe src="https://poll.ly/BcxFsbkwL0QoLWgr0mRH"
-      style="width: 100%; height: 100%; border: none;zoom:80%;"></iframe> -->
+    <iframe src="https://poll.ly/BcxFsbkwL0QoLWgr0mRH"
+      style="width: 100%; height: 100%; border: none;zoom:80%;"></iframe>
 
   </div>
   <div class="error-popup-container"></div>
